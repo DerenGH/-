@@ -1,4 +1,3 @@
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+Armenian:wght@400;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -90,10 +89,10 @@
   <div class="flash-overlay" id="flash-overlay"></div>
 
   <div id="screen-main" class="screen">
-    <div class="quiz-badge">12 Հarq · Timer</div>
-    <div class="quiz-main-title">Հapavumneri<br>Qviz</div>
-    <div class="quiz-sub">Abbreviations Quiz — How well do you know them?</div>
-    <button class="btn-start" onclick="startQuiz()">Start</button>
+    <div class="quiz-badge">12 Հարց · Ժամաչափ</div>
+    <div class="quiz-main-title">Հապավումների<br>Քվիզ</div>
+    <div class="quiz-sub">Abbreviations Quiz — Որքա՞ն լավ գիտեք դրանք:</div>
+    <button class="btn-start" onclick="startQuiz()">Սկսել</button>
   </div>
 
   <div id="screen-quiz" class="screen hidden">
@@ -108,14 +107,14 @@
   </div>
 
   <div id="screen-result" class="screen hidden">
-    <div class="result-title">Արդյunq / Result</div>
-    <div class="result-sub">Here's how you did:</div>
+    <div class="result-title">Արդյունք / Result</div>
+    <div class="result-sub">Ահա թե ինչպես դուք անցաք թեստը.</div>
     <div class="donut-wrap">
       <canvas id="donut-canvas" width="180" height="180"></canvas>
-      <div class="donut-label"><span class="donut-pct" id="donut-pct">0%</span><span class="donut-small">Accuracy</span></div>
+      <div class="donut-label"><span class="donut-pct" id="donut-pct">0%</span><span class="donut-small">Ճշտություն</span></div>
     </div>
     <div class="score-detail" id="score-detail"></div>
-    <button class="btn-restart" onclick="restartQuiz()">Կrknin p'ordhel / Try Again</button>
+    <button class="btn-restart" onclick="restartQuiz()">Կրկին փորձել / Try Again</button>
   </div>
 </div>
 
@@ -124,16 +123,16 @@ const MATCH_PAIRS_1=[
   {abbr:'EU',  arm:'ԵՄ'},
   {abbr:'CoE', arm:'ԵԽ'},
   {abbr:'UN',  arm:'ՄԱԿ'},
-  {abbr:'NA',  arm:'ՄԲ'},
+  {abbr:'NA',  arm:'ԱԺ'},
   {abbr:'SC',  arm:'ԱԽ'},
-  {abbr:'MB',  arm:'ԱԺ'},
+  {abbr:'MB',  arm:'ՄԲ'},
 ];
 
 const MATCH_PAIRS_2=[
   {abbr:'OS',  arm:'ՕՀ'},
-  {abbr:'CPU', arm:'ՑՀ'},
-  {abbr:'WWW', arm:'ՏՏ'},
-  {abbr:'IT',  arm:'ԿՊՀ'},
+  {abbr:'CPU', arm:'ԿՊՀ'},
+  {abbr:'WWW', arm:'ՀՀՀ'},
+  {abbr:'IT',  arm:'ՏՏ'},
   {abbr:'MFA', arm:'ԱԳՆ'},
   {abbr:'CIS', arm:'ԱՊՀ'},
 ];
@@ -141,74 +140,74 @@ const MATCH_PAIRS_2=[
 const QUESTIONS=[
   {
     type:'mcq', timed:true,
-    qText:'What is an abbreviation? / Ի՞նչ է հapavumը',
+    qText:'Ի՞նչ է հապավումը: / What is an abbreviation?',
     answers:[
-      'Բառի ամbогhжакаn ձевы / Full form of a word',
-      'Բառի կам арtаhаytutуuny кrchatvatzy ձевы / Shortened form',
-      'Nor barr / A new word',
-      "Chgitem / I don't know"
+      'Բառի ամբողջական ձևը / Full form of a word',
+      'Բառի կամ արտահայտության կրճատված ձևը / Shortened form',
+      'Նոր բառ / A new word',
+      "Չգիտեմ / I don't know"
     ],
-    correct:'Բառի կам арtаhаytutуuny кrchatvatzy ձевы / Shortened form'
+    correct:'Բառի կամ արտահայտության կրճատված ձևը / Shortened form'
   },
   {
     type:'mcq', timed:true,
-    qText:'What does "BFF" stand for? / Ի՞нch е nshanakoum «BFF»-y',
+    qText:'Ի՞նչ է նշանակում «BFF»-ը: / What does "BFF" stand for?',
     answers:[
-      'Lavaguyn ynkernner haverzh / Best Friends Forever',
-      'Arag ynkeracir / Be Friends Fast',
-      'Mec ynkerasern toghay / Big Friendly Fellow',
-      'Urbath orva lavaguyn zvarchanqy / Best Friday Fun'
+      'Լավագույն ընկերներ հավերժ / Best Friends Forever',
+      'Արագ ընկերացիր / Be Friends Fast',
+      'Մեծ ընկերասեր տղա / Big Friendly Fellow',
+      'Ուրբաթ օրվա լավագույն զվարճանքը / Best Friday Fun'
     ],
-    correct:'Lavaguyn ynkernner haverzh / Best Friends Forever'
+    correct:'Լավագույն ընկերներ հավերժ / Best Friends Forever'
   },
   {
     type:'freetext', timed:false,
-    qText:'Ի՞нch hapavumner giteq / What abbreviations do you know?'
+    qText:'Ի՞նչ հապավումներ գիտեք: / What abbreviations do you know?'
   },
   {
     type:'mcq', timed:true,
-    qText:'Որteghi enq ambenazhato hanapum hapavumnery / Where do we encounter abbreviations the most?',
+    qText:'Որտե՞ղ ենք ամենաշատը հանդիպում հապավումների: / Where do we encounter abbreviations the most?',
     answers:[
-      'Բжшkutyuny mej / Medicine',
-      'Dasagrknerm / Textbooks',
-      'Sociayakan cangnerum / Social media',
-      'Filmnerum ev serialnerum / Movies & TV shows'
+      'Բժշկության մեջ / Medicine',
+      'Դասագրքերում / Textbooks',
+      'Սոցիալական ցանցերում / Social media',
+      'Ֆիլմերում և սերիալներում / Movies & TV shows'
     ],
-    correct:'Sociayakan cangnerum / Social media'
+    correct:'Սոցիալական ցանցերում / Social media'
   },
   {
     type:'mcq-open', timed:true,
-    qText:'Ո՞р hapavumn е chisht / Which is the correct abbreviation?',
+    qText:'Ո՞ր հապավումն է ճիշտ: / Which is the correct abbreviation?',
     fullForm:'Personal Computer',
     answers:['OS','CPU','CT','PC'], correct:'PC'
   },
   {
     type:'mcq-open', timed:true,
-    qText:'Ո՞р hapavumn е chisht / Which is the correct abbreviation?',
+    qText:'Ո՞ր հապավումն է ճիշտ: / Which is the correct abbreviation?',
     fullForm:'Blood Pressure',
     answers:['HR','RR','ER','BP'], correct:'BP'
   },
   {
     type:'mcq-open', timed:true,
-    qText:'Ո՞р hapavumn е chisht / Which is the correct abbreviation?',
+    qText:'Ո՞ր հապավումն է ճիշտ: / Which is the correct abbreviation?',
     fullForm:'North Atlantic Treaty Organization',
     answers:['NASA','NGO','NGL','NATO'], correct:'NATO'
   },
   {
     type:'mcq-open', timed:true,
-    qText:'Ո՞р hapavumn е chisht / Which is the correct abbreviation?',
+    qText:'Ո՞ր հապավումն է ճիշտ: / Which is the correct abbreviation?',
     fullForm:'United Nations',
     answers:['EU','NA','MP','UN'], correct:'UN'
   },
   {
     type:'mcq-abbr', timed:true,
-    qText:'Ո՞р hapavumn е sa / What is the abbreviation for?',
+    qText:'Ո՞ր հապավումն է սա: / What is the abbreviation for?',
     fullForm:'Council of Europe',
     answers:['CIS','CEC','CPU','CoE'], correct:'CoE'
   },
   {
     type:'mcq-abbr', timed:true,
-    qText:'Ո՞р hapavumn е sa / What is the abbreviation for?',
+    qText:'Ո՞ր հապավումն է սա: / What is the abbreviation for?',
     fullForm:'Megabyte',
     answers:['GB','MP','NA','MB'], correct:'MB'
   },
@@ -240,7 +239,7 @@ function renderQuestion(){
   qBody.innerHTML='';
 
   if(q.type==='match'){
-    qTextEl.innerHTML='Կцiri hapavumы / Match the abbreviation';
+    qTextEl.innerHTML='Կցիր հապավումը / Match the abbreviation';
     renderMatchQuestion(qBody,q.pairs);
     showTimer();startTimer(MATCH_TIMER,true);return;
   }
@@ -276,16 +275,16 @@ function renderMCQ(container,answers,correct){
 function renderFreetext(container){
   const wrap=document.createElement('div');wrap.className='freetext-wrap';
   const label=document.createElement('div');label.className='freetext-label';
-  label.textContent='Գրեք ձեզ հայтни hапавумнеры, апа сеghмеq «Ուgharkеl»';
+  label.textContent='Գրեք ձեզ հայտնի հապավումները, ապա սեղմեք «Ուղարկել»';
   wrap.appendChild(label);
   const input=document.createElement('input');input.type='text';input.className='freetext-input';
-  input.placeholder='Օрینак՝ NASA, EU, UN...';wrap.appendChild(input);
+  input.placeholder='Օրինակ՝ NASA, EU, UN...';wrap.appendChild(input);
   const btn=document.createElement('button');btn.className='freetext-submit';
-  btn.textContent='Ուgharkеl →';
+  btn.textContent='Ուղարկել →';
   btn.onclick=()=>{
     btn.disabled=true;input.disabled=true;
     const done=document.createElement('div');done.className='freetext-done';
-    done.textContent='Shnorhakаlutyun! Ancnum enq hajordhin...';
+    done.textContent='Շնորհակալություն: Անցնում ենք հաջորդին...';
     wrap.appendChild(done);score++;setTimeout(advance,1400);
   };
   wrap.appendChild(btn);container.appendChild(wrap);
@@ -368,11 +367,11 @@ function renderMatchQuestion(container,pairs){
   const shuffledArm=shuffle(pairs.map(p=>p.arm));
   const wrap=document.createElement('div');wrap.className='match-wrap';
   const instr=document.createElement('div');instr.className='match-instructions';
-  instr.textContent='Քашеq dzakhits → gcheq chisht haykakami hapavumi vra';
+  instr.textContent='Քաշեք ձախից → գցեք ճիշտ հայկական հապավման վրա';
   wrap.appendChild(instr);
   const cols=document.createElement('div');cols.className='match-columns';
   const lw=document.createElement('div');
-  const lh=document.createElement('div');lh.className='match-col-label';lh.textContent='Հapavum';
+  const lh=document.createElement('div');lh.className='match-col-label';lh.textContent='Հապավում';
   const lc=document.createElement('div');lc.className='left-col';
   lw.appendChild(lh);lw.appendChild(lc);
   const mw=document.createElement('div');
@@ -380,7 +379,7 @@ function renderMatchQuestion(container,pairs){
   const mc=document.createElement('div');mc.className='mid-col';
   mw.appendChild(mh);mw.appendChild(mc);
   const rw=document.createElement('div');
-  const rh=document.createElement('div');rh.className='match-col-label';rh.textContent='Haykakan';
+  const rh=document.createElement('div');rh.className='match-col-label';rh.textContent='Հայկական';
   const rc=document.createElement('div');rc.className='right-col';
   rw.appendChild(rh);rw.appendChild(rc);
   cols.appendChild(lw);cols.appendChild(mw);cols.appendChild(rw);
@@ -399,10 +398,10 @@ function renderMatchQuestion(container,pairs){
   });
 
   const ms=document.createElement('div');ms.className='match-score';
-  ms.innerHTML='Kcuirvatzy: <span id="match-score-num">0</span> / '+pairs.length;
+  ms.innerHTML='Կցված է: <span id="match-score-num">0</span> / '+pairs.length;
   wrap.appendChild(ms);
   const nb=document.createElement('button');nb.className='match-next-btn';nb.id='match-next-btn';
-  nb.textContent='Haجordh →';
+  nb.textContent='Հաջորդը →';
   nb.onclick=()=>{stopTimer();advance();};
   wrap.appendChild(nb);
   container.appendChild(wrap);
@@ -473,7 +472,7 @@ function showResult(){
   const real=shuffled.filter(q=>q.type!=='placeholder').length;
   const pct=real>0?Math.round((score/real)*100):0;
   document.getElementById('donut-pct').textContent=pct+'%';
-  document.getElementById('score-detail').innerHTML='Duq chisht pataskhaneciq <span>'+score+' / '+real+'</span> harci.';
+  document.getElementById('score-detail').innerHTML='Դուք ճիշտ պատասխանեցիք <span>'+score+' / '+real+'</span> հարցի:';
   drawDonut(pct);
 }
 function drawDonut(pct){
