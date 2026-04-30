@@ -1,11 +1,32 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+Armenian:wght@400;700&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}
-#quiz-root{
-  min-height:560px;font-family:'Nunito',sans-serif;background:#1a1a2e;color:#fff;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border-radius:16px;overflow:hidden;position:relative;padding:24px 16px;
+
+/* Fix for Fullscreen / White space bug */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background: #1a1a2e; /* Matches the quiz background */
+  overflow-x: hidden;
 }
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+#quiz-root{
+  min-height: 100vh; /* Takes full height of the viewport */
+  width: 100%;
+  font-family:'Nunito',sans-serif;
+  background:#1a1a2e;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding: 40px 16px;
+}
+
 .bg-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
 .screen{width:100%;max-width:600px;position:relative;z-index:1;}
 .screen.hidden{display:none;}
@@ -35,7 +56,7 @@
 .ans-btn.dim{opacity:0.35;}
 @keyframes pulse-green{0%{transform:scale(1);}40%{transform:scale(1.06);}100%{transform:scale(1);}}
 @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
-.flash-overlay{position:absolute;inset:0;border-radius:16px;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:10;}
+.flash-overlay{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:10;}
 .flash-overlay.green{background:rgba(34,197,94,0.13);}
 .flash-overlay.red{background:rgba(239,68,68,0.13);}
 .flash-overlay.active{opacity:1;}
@@ -119,6 +140,7 @@
 </div>
 
 <script>
+// Logic and data from previous context[cite: 2]
 const MATCH_PAIRS_1=[
   {abbr:'EU',  arm:'ԵՄ'},
   {abbr:'CoE', arm:'ԵԽ'},
@@ -400,7 +422,8 @@ function renderMatchQuestion(container,pairs){
   const ms=document.createElement('div');ms.className='match-score';
   ms.innerHTML='Կցված է: <span id="match-score-num">0</span> / '+pairs.length;
   wrap.appendChild(ms);
-  const nb=document.createElement('button');nb.className='match-next-btn';nb.id='match-next-btn';
+  const nb=document.getElementById('match-next-btn') || document.createElement('button');
+  nb.className='match-next-btn';nb.id='match-next-btn';
   nb.textContent='Հաջորդը →';
   nb.onclick=()=>{stopTimer();advance();};
   wrap.appendChild(nb);
@@ -469,12 +492,13 @@ function handleDrop(zone){
 
 function showResult(){
   stopTimer();show('screen-result');
-  const real=shuffled.filter(q=>q.type!=='placeholder').length;
+  const real=shuffled.length;
   const pct=real>0?Math.round((score/real)*100):0;
   document.getElementById('donut-pct').textContent=pct+'%';
   document.getElementById('score-detail').innerHTML='Դուք ճիշտ պատասխանեցիք <span>'+score+' / '+real+'</span> հարցի:';
   drawDonut(pct);
 }
+
 function drawDonut(pct){
   const canvas=document.getElementById('donut-canvas');const ctx=canvas.getContext('2d');
   const cx=90,cy=90,r=70,lw=20,start=-Math.PI/2,end=start+(2*Math.PI*pct/100);
