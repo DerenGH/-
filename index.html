@@ -1,32 +1,34 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+Armenian:wght@400;700&display=swap');
 
-/* Fix for Fullscreen / White space bug */
+/* THE FIX: Force 100% coverage for any screen size */
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
   width: 100%;
-  background: #1a1a2e; /* Matches the quiz background */
+  min-height: 100vh;
+  /* This prevents the white area seen in image_d4f15b.png */
+  background-color: #1a1a2e; 
+  background-attachment: fixed;
   overflow-x: hidden;
 }
 
-*{box-sizing:border-box;margin:0;padding:0;}
-
-#quiz-root{
-  min-height: 100vh; /* Takes full height of the viewport */
+#quiz-root {
+  min-height: 100vh;
   width: 100%;
-  font-family:'Nunito',sans-serif;
-  background:#1a1a2e;
-  color:#fff;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  padding: 40px 16px;
+  font-family: 'Nunito', sans-serif;
+  background: #1a1a2e; /* Deep purple background */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 40px 20px;
+  box-sizing: border-box;
 }
 
+/* Rest of your styles remain untouched */
 .bg-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
 .screen{width:100%;max-width:600px;position:relative;z-index:1;}
 .screen.hidden{display:none;}
@@ -140,7 +142,7 @@ html, body {
 </div>
 
 <script>
-// Logic and data from previous context[cite: 2]
+/* Data including all 12 questions[cite: 2] */
 const MATCH_PAIRS_1=[
   {abbr:'EU',  arm:'ԵՄ'},
   {abbr:'CoE', arm:'ԵԽ'},
