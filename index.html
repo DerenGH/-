@@ -1,87 +1,251 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+Armenian:wght@400;700&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}
-#quiz-root{
-  min-height:560px;font-family:'Nunito',sans-serif;background:#1a1a2e;color:#fff;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border-radius:16px;overflow:hidden;position:relative;padding:24px 16px;
+
+/* Reset and Global Layout */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-.bg-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
-.screen{width:100%;max-width:600px;position:relative;z-index:1;}
-.screen.hidden{display:none;}
-#screen-main{text-align:center;}
-.quiz-badge{display:inline-block;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:100px;padding:6px 18px;font-size:13px;letter-spacing:0.08em;margin-bottom:20px;color:#c8b8ff;}
-.quiz-main-title{font-family:'Noto Sans Armenian','Nunito',sans-serif;font-size:38px;font-weight:900;line-height:1.15;margin-bottom:10px;background:linear-gradient(135deg,#fff 0%,#c8b8ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.quiz-sub{color:rgba(255,255,255,0.55);font-size:15px;margin-bottom:40px;}
-.btn-start{background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;border-radius:100px;color:#fff;font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;padding:16px 56px;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 8px 32px rgba(124,58,237,0.45);}
-.btn-start:hover{transform:scale(1.05);}
-.progress-bar-wrap{width:100%;height:7px;background:rgba(255,255,255,0.1);border-radius:100px;margin-bottom:16px;overflow:hidden;}
-.progress-bar-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#a855f7);border-radius:100px;transition:width 0.4s ease;}
-.timer-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;min-height:26px;}
-.timer-num{font-size:15px;font-weight:800;min-width:28px;text-align:right;transition:color 0.3s;}
-.timer-track{flex:1;height:10px;background:rgba(255,255,255,0.1);border-radius:100px;overflow:hidden;}
-.timer-fill{height:100%;border-radius:100px;width:100%;transition:width 1s linear,background-color 0.5s;background:#a855f7;}
-.timer-hidden{visibility:hidden;}
-.q-counter{text-align:center;font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:10px;letter-spacing:0.05em;}
-.q-text{font-family:'Noto Sans Armenian','Nunito',sans-serif;text-align:center;font-size:17px;font-weight:800;margin-bottom:22px;line-height:1.5;color:#fff;}
-.q-abbr{color:#f0c040;font-size:24px;display:block;margin-top:8px;font-family:'Nunito',sans-serif;}
-.answers-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.ans-btn{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.12);border-radius:14px;color:#fff;font-family:'Noto Sans Armenian','Nunito',sans-serif;font-size:13px;font-weight:700;padding:14px 10px;cursor:pointer;transition:background 0.2s,border-color 0.2s,transform 0.12s,box-shadow 0.2s;text-align:center;min-height:72px;display:flex;align-items:center;justify-content:center;line-height:1.35;}
-.ans-btn:hover:not(:disabled){background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.3);transform:scale(1.02);}
-.ans-btn:disabled{cursor:default;transform:none;}
-.ans-btn.correct{background:rgba(34,197,94,0.3);border-color:#22c55e;color:#86efac;box-shadow:0 0 18px rgba(34,197,94,0.45);animation:pulse-green 0.5s ease;}
-.ans-btn.wrong{background:rgba(239,68,68,0.3);border-color:#ef4444;color:#fca5a5;box-shadow:0 0 18px rgba(239,68,68,0.45);animation:shake 0.4s ease;}
-.ans-btn.timeout{background:rgba(255,165,0,0.2);border-color:#f59e0b;color:#fcd34d;box-shadow:0 0 14px rgba(245,158,11,0.35);}
-.ans-btn.dim{opacity:0.35;}
-@keyframes pulse-green{0%{transform:scale(1);}40%{transform:scale(1.06);}100%{transform:scale(1);}}
-@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
-.flash-overlay{position:absolute;inset:0;border-radius:16px;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:10;}
+
+html, body {
+  height: 100%;
+  background-color: #1a1a2e; /* Ensures the browser background matches the quiz */
+}
+
+#quiz-root {
+  min-height: 100vh; /* Forces container to fill the entire window height */
+  width: 100%;
+  font-family: 'Nunito', sans-serif;
+  background: #1a1a2e;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-x: hidden;
+  padding: 40px 20px;
+}
+
+.bg-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Screen and UI elements */
+.screen {
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  z-index: 1;
+}
+
+.screen.hidden { display: none; }
+
+#screen-main { text-align: center; }
+
+.quiz-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  padding: 6px 18px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+  color: #c8b8ff;
+}
+
+.quiz-main-title {
+  font-family: 'Noto Sans Armenian', 'Nunito', sans-serif;
+  font-size: clamp(32px, 8vw, 42px); /* Responsive title size */
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #fff 0%, #c8b8ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.quiz-sub {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 15px;
+  margin-bottom: 40px;
+}
+
+.btn-start {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border: none;
+  border-radius: 100px;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  padding: 16px 56px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.45);
+}
+
+.btn-start:hover { transform: scale(1.05); }
+
+.progress-bar-wrap {
+  width: 100%;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.timer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  min-height: 26px;
+}
+
+.timer-num {
+  font-size: 15px;
+  font-weight: 800;
+  min-width: 28px;
+  text-align: right;
+  transition: color 0.3s;
+}
+
+.timer-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.timer-fill {
+  height: 100%;
+  border-radius: 100px;
+  width: 100%;
+  transition: width 1s linear, background-color 0.5s;
+  background: #a855f7;
+}
+
+.timer-hidden { visibility: hidden; }
+
+.q-counter {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+
+.q-text {
+  font-family: 'Noto Sans Armenian', 'Nunito', sans-serif;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 22px;
+  line-height: 1.5;
+  color: #fff;
+}
+
+.q-abbr {
+  color: #f0c040;
+  font-size: 24px;
+  display: block;
+  margin-top: 8px;
+  font-family: 'Nunito', sans-serif;
+}
+
+.answers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .answers-grid { grid-template-columns: 1fr; }
+}
+
+.ans-btn {
+  background: rgba(255, 255, 255, 0.07);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  color: #fff;
+  font-family: 'Noto Sans Armenian', 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px 10px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.12s;
+  text-align: center;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.35;
+}
+
+.ans-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.02);
+}
+
+.ans-btn.correct { background: rgba(34, 197, 94, 0.3); border-color: #22c55e; color: #86efac; }
+.ans-btn.wrong { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; color: #fca5a5; }
+
+/* Match and Result specific styles ... */
+.freetext-input {
+  background: rgba(255, 255, 255, 0.07);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  color: #fff;
+  font-family: 'Noto Sans Armenian', sans-serif;
+  font-size: 16px;
+  padding: 16px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.freetext-submit {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border: none;
+  border-radius: 100px;
+  color: #fff;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.result-title { font-family: 'Noto Sans Armenian', sans-serif; font-size: 30px; margin-bottom: 10px; }
+.btn-restart {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border: none;
+  border-radius: 100px;
+  color: #fff;
+  padding: 14px 40px;
+  cursor: pointer;
+  font-weight: 800;
+  margin-top: 20px;
+}
+.flash-overlay{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:10;}
 .flash-overlay.green{background:rgba(34,197,94,0.13);}
 .flash-overlay.red{background:rgba(239,68,68,0.13);}
 .flash-overlay.active{opacity:1;}
-.freetext-wrap{display:flex;flex-direction:column;gap:14px;}
-.freetext-label{font-size:13px;color:rgba(255,255,255,0.45);text-align:center;font-family:'Noto Sans Armenian','Nunito',sans-serif;}
-.freetext-input{background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.2);border-radius:14px;color:#fff;font-family:'Noto Sans Armenian','Nunito',sans-serif;font-size:16px;font-weight:700;padding:16px 18px;outline:none;width:100%;transition:border-color 0.15s;}
-.freetext-input:focus{border-color:#a855f7;}
-.freetext-input::placeholder{color:rgba(255,255,255,0.25);}
-.freetext-submit{background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;border-radius:100px;color:#fff;font-family:'Noto Sans Armenian','Nunito',sans-serif;font-size:16px;font-weight:800;padding:14px 36px;cursor:pointer;transition:transform 0.15s;align-self:center;}
-.freetext-submit:hover{transform:scale(1.05);}
-.freetext-submit:disabled{opacity:0.4;cursor:default;transform:none;}
-.freetext-done{text-align:center;font-size:15px;color:#86efac;font-weight:800;padding:12px 0;font-family:'Noto Sans Armenian','Nunito',sans-serif;}
-.match-wrap{position:relative;z-index:1;}
-.match-instructions{text-align:center;font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:16px;font-family:'Noto Sans Armenian','Nunito',sans-serif;}
-.match-columns{display:grid;grid-template-columns:1fr 32px 1fr;gap:0 6px;align-items:start;}
-.match-col-label{font-size:11px;font-weight:800;letter-spacing:0.08em;color:rgba(255,255,255,0.3);text-align:center;margin-bottom:8px;text-transform:uppercase;font-family:'Noto Sans Armenian','Nunito',sans-serif;}
-.left-col,.right-col{display:flex;flex-direction:column;gap:8px;}
-.mid-col{display:flex;flex-direction:column;gap:8px;padding-top:27px;}
-.drag-item{background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);border-radius:12px;padding:11px 14px;font-size:17px;font-weight:800;text-align:center;cursor:grab;transition:border-color 0.15s,background 0.15s,transform 0.12s;user-select:none;color:#fff;min-height:48px;display:flex;align-items:center;justify-content:center;}
-.drag-item:hover{background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.3);transform:scale(1.03);}
-.drag-item.dragging{opacity:0.3;}
-.drag-item.locked{cursor:default;transform:none!important;}
-.drag-item.correct{background:rgba(34,197,94,0.22);border-color:#22c55e;color:#86efac;}
-.drag-item.wrong-shake{animation:shake 0.4s;}
-.drop-zone{background:rgba(255,255,255,0.04);border:2px dashed rgba(255,255,255,0.18);border-radius:12px;padding:11px 10px;min-height:48px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;font-family:'Noto Sans Armenian','Nunito',sans-serif;color:rgba(255,255,255,0.9);transition:border-color 0.15s,background 0.15s;}
-.drop-zone.over{border-color:#a855f7;background:rgba(168,85,247,0.12);}
-.drop-zone.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);}
-.drop-zone.wrong-flash{border-color:#ef4444;background:rgba(239,68,68,0.15);}
-.match-arrow{display:flex;align-items:center;justify-content:center;height:48px;color:rgba(255,255,255,0.2);font-size:16px;}
-.match-score{text-align:center;font-size:13px;color:rgba(255,255,255,0.4);margin-top:14px;font-family:'Noto Sans Armenian','Nunito',sans-serif;}
-.match-score span{color:#c8b8ff;font-weight:800;}
-.match-next-btn{display:block;margin:14px auto 0;background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;border-radius:100px;color:#fff;font-family:'Noto Sans Armenian','Nunito',sans-serif;font-size:15px;font-weight:800;padding:11px 36px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity 0.3s,transform 0.15s;}
-.match-next-btn.visible{opacity:1;pointer-events:auto;}
-.match-next-btn:hover{transform:scale(1.05);}
-#screen-result{text-align:center;}
-.result-title{font-family:'Noto Sans Armenian','Nunito',sans-serif;font-size:30px;font-weight:900;margin-bottom:8px;}
-.result-sub{color:rgba(255,255,255,0.5);font-size:15px;margin-bottom:28px;font-family:'Noto Sans Armenian','Nunito',sans-serif;}
-.donut-wrap{position:relative;width:180px;height:180px;margin:0 auto 24px;}
-.donut-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
-.donut-pct{font-size:36px;font-weight:900;color:#fff;display:block;}
-.donut-small{font-size:13px;color:rgba(255,255,255,0.5);}
-.score-detail{font-size:16px;color:rgba(255,255,255,0.7);margin-bottom:32px;font-family:'Noto Sans Armenian','Nunito',sans-serif;}
-.score-detail span{color:#c8b8ff;font-weight:800;}
-.btn-restart{background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;border-radius:100px;color:#fff;font-family:'Noto Sans Armenian','Nunito',sans-serif;font-size:16px;font-weight:800;padding:14px 44px;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,0.4);transition:transform 0.15s;}
-.btn-restart:hover{transform:scale(1.05);}
-.ghost{position:fixed;pointer-events:none;background:#7c3aed;border:2px solid #a855f7;border-radius:12px;padding:9px 18px;font-size:17px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;opacity:0.93;z-index:9999;transform:translate(-50%,-50%) rotate(3deg) scale(1.08);white-space:nowrap;}
 </style>
 
 <div id="quiz-root">
@@ -108,17 +272,19 @@
 
   <div id="screen-result" class="screen hidden">
     <div class="result-title">Արդյունք / Result</div>
-    <div class="result-sub">Ահա թե ինչպես դուք անցաք թեստը.</div>
-    <div class="donut-wrap">
-      <canvas id="donut-canvas" width="180" height="180"></canvas>
-      <div class="donut-label"><span class="donut-pct" id="donut-pct">0%</span><span class="donut-small">Ճշտություն</span></div>
+    <div class="result-sub">Ահա թե ինչպես դուք անցաք թեստը:</div>
+    <div style="text-align:center; margin-bottom: 20px;">
+        <canvas id="donut-canvas" width="180" height="180"></canvas>
+        <div style="margin-top:-100px; font-size:32px; font-weight:900;" id="donut-pct">0%</div>
+        <div style="margin-top:40px; color:rgba(255,255,255,0.5)">Ճշտություն</div>
     </div>
-    <div class="score-detail" id="score-detail"></div>
+    <div class="score-detail" id="score-detail" style="margin-top:30px;"></div>
     <button class="btn-restart" onclick="restartQuiz()">Կրկին փորձել / Try Again</button>
   </div>
 </div>
 
 <script>
+// Logic and pairs from armenian_abbreviation_quiz_final.html
 const MATCH_PAIRS_1=[
   {abbr:'EU',  arm:'ԵՄ'},
   {abbr:'CoE', arm:'ԵԽ'},
@@ -210,281 +376,110 @@ const QUESTIONS=[
     qText:'Ո՞ր հապավումն է սա: / What is the abbreviation for?',
     fullForm:'Megabyte',
     answers:['GB','MP','NA','MB'], correct:'MB'
-  },
-  {type:'match', timed:true, pairs:MATCH_PAIRS_1},
-  {type:'match', timed:true, pairs:MATCH_PAIRS_2},
+  }
 ];
 
-const TIMER_SEC=15, MATCH_TIMER=45;
-let current=0,score=0,answered=false,shuffled=[];
-let timerInterval=null,timeLeft=0;
-let matchMatched=0,dragSrc=null,ghost=null;
+let current=0, score=0, timerInterval=null;
 
-function shuffle(arr){return[...arr].sort(()=>Math.random()-0.5);}
-function show(id){['screen-main','screen-quiz','screen-result'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==id));}
-
-function startQuiz(){
-  shuffled=[...QUESTIONS];
-  current=0;score=0;show('screen-quiz');renderQuestion();
+function startQuiz() {
+  current=0; score=0;
+  document.getElementById('screen-main').classList.add('hidden');
+  document.getElementById('screen-quiz').classList.remove('hidden');
+  renderQuestion();
 }
 
-function renderQuestion(){
-  answered=false;
-  const q=shuffled[current];
-  const total=shuffled.length;
-  document.getElementById('prog-fill').style.width=((current/total)*100)+'%';
-  document.getElementById('q-counter').textContent=(current+1)+' / '+total;
-  const qTextEl=document.getElementById('q-text');
-  const qBody=document.getElementById('q-body');
-  qBody.innerHTML='';
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  document.getElementById('q-counter').textContent = (current+1) + " / " + QUESTIONS.length;
+  document.getElementById('prog-fill').style.width = ((current / QUESTIONS.length) * 100) + "%";
+  document.getElementById('q-text').innerHTML = q.qText + (q.fullForm ? `<span class="q-abbr">${q.fullForm}</span>` : "");
+  
+  const body = document.getElementById('q-body');
+  body.innerHTML = "";
 
-  if(q.type==='match'){
-    qTextEl.innerHTML='Կցիր հապավումը / Match the abbreviation';
-    renderMatchQuestion(qBody,q.pairs);
-    showTimer();startTimer(MATCH_TIMER,true);return;
-  }
-  if(q.type==='freetext'){
-    qTextEl.innerHTML=q.qText;
-    hideTimer();renderFreetext(qBody);return;
-  }
-  if(q.type==='mcq-open'||q.type==='mcq-abbr'){
-    qTextEl.innerHTML=q.qText+'<span class="q-abbr">'+q.fullForm+'</span>';
-    renderMCQ(qBody,q.answers,q.correct);
-    showTimer();startTimer(TIMER_SEC,false);return;
-  }
-  if(q.type==='mcq'){
-    qTextEl.innerHTML=q.qText;
-    renderMCQ(qBody,q.answers,q.correct);
-    if(q.timed){showTimer();startTimer(TIMER_SEC,false);}
-    else hideTimer();
+  if(q.type === 'mcq' || q.type === 'mcq-open' || q.type === 'mcq-abbr') {
+    const grid = document.createElement('div');
+    grid.className = 'answers-grid';
+    q.answers.forEach(ans => {
+      const btn = document.createElement('button');
+      btn.className = 'ans-btn';
+      btn.textContent = ans;
+      btn.onclick = () => checkAnswer(ans, q.correct, btn);
+      grid.appendChild(btn);
+    });
+    body.appendChild(grid);
+    if(q.timed) startTimer(15);
+  } else if(q.type === 'freetext') {
+    const input = document.createElement('input');
+    input.className = 'freetext-input';
+    input.placeholder = "Մուտքագրեք այստեղ...";
+    const btn = document.createElement('button');
+    btn.className = 'freetext-submit';
+    btn.textContent = "Հաջորդը";
+    btn.onclick = () => { score++; advance(); };
+    body.appendChild(input);
+    body.appendChild(btn);
   }
 }
 
-function renderMCQ(container,answers,correct){
-  const grid=document.createElement('div');
-  grid.className='answers-grid';
-  shuffle(answers).forEach(ans=>{
-    const btn=document.createElement('button');
-    btn.className='ans-btn';btn.textContent=ans;
-    btn.onclick=()=>selectAnswer(ans,correct,btn,grid);
-    grid.appendChild(btn);
-  });
-  container.appendChild(grid);
+function startTimer(sec) {
+  let left = sec;
+  const fill = document.getElementById('timer-fill');
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    left--;
+    document.getElementById('timer-num').textContent = left;
+    fill.style.width = (left/sec*100) + "%";
+    if(left <= 0) { clearInterval(timerInterval); advance(); }
+  }, 1000);
 }
 
-function renderFreetext(container){
-  const wrap=document.createElement('div');wrap.className='freetext-wrap';
-  const label=document.createElement('div');label.className='freetext-label';
-  label.textContent='Գրեք ձեզ հայտնի հապավումները, ապա սեղմեք «Ուղարկել»';
-  wrap.appendChild(label);
-  const input=document.createElement('input');input.type='text';input.className='freetext-input';
-  input.placeholder='Օրինակ՝ NASA, EU, UN...';wrap.appendChild(input);
-  const btn=document.createElement('button');btn.className='freetext-submit';
-  btn.textContent='Ուղարկել →';
-  btn.onclick=()=>{
-    btn.disabled=true;input.disabled=true;
-    const done=document.createElement('div');done.className='freetext-done';
-    done.textContent='Շնորհակալություն: Անցնում ենք հաջորդին...';
-    wrap.appendChild(done);score++;setTimeout(advance,1400);
-  };
-  wrap.appendChild(btn);container.appendChild(wrap);
-  setTimeout(()=>input.focus(),100);
-}
-
-function flashScreen(type){
-  const fl=document.getElementById('flash-overlay');
-  fl.className='flash-overlay '+type;fl.classList.add('active');
-  setTimeout(()=>fl.classList.remove('active'),900);
-}
-
-function selectAnswer(chosen,correct,btn,grid){
-  if(answered)return;
-  answered=true;stopTimer();
-  const allBtns=grid.querySelectorAll('.ans-btn');
-  allBtns.forEach(b=>b.disabled=true);
-  if(chosen===correct){
+function checkAnswer(chosen, correct, btn) {
+  clearInterval(timerInterval);
+  if(chosen === correct) {
     btn.classList.add('correct');
-    allBtns.forEach(b=>{if(b!==btn)b.classList.add('dim');});
-    flashScreen('green');score++;
+    score++;
+    flash('green');
   } else {
     btn.classList.add('wrong');
-    allBtns.forEach(b=>{
-      if(b!==btn&&b.textContent===correct)b.classList.add('correct');
-      else if(b!==btn)b.classList.add('dim');
-    });
-    flashScreen('red');
+    flash('red');
   }
-  setTimeout(advance,1100);
+  setTimeout(advance, 1000);
 }
 
-function hideTimer(){document.getElementById('timer-row').classList.add('timer-hidden');stopTimer();}
-function showTimer(){document.getElementById('timer-row').classList.remove('timer-hidden');}
-
-function startTimer(sec,isMatch){
-  stopTimer();timeLeft=sec;updateTimerDisplay(timeLeft,sec);
-  const fill=document.getElementById('timer-fill');
-  fill.style.transition='none';fill.style.width='100%';fill.style.backgroundColor='#a855f7';
-  void fill.offsetWidth;fill.style.transition='width 1s linear,background-color 0.5s';
-  timerInterval=setInterval(()=>{
-    timeLeft--;updateTimerDisplay(timeLeft,sec);
-    if(timeLeft<=0){
-      stopTimer();
-      if(isMatch){const nb=document.getElementById('match-next-btn');if(nb)nb.classList.add('visible');}
-      else onTimeout(shuffled[current].correct);
-    }
-  },1000);
+function flash(type) {
+  const f = document.getElementById('flash-overlay');
+  f.className = 'flash-overlay ' + type + ' active';
+  setTimeout(() => f.classList.remove('active'), 300);
 }
 
-function updateTimerDisplay(t,total){
-  const fill=document.getElementById('timer-fill');
-  const num=document.getElementById('timer-num');
-  fill.style.width=((t/total)*100)+'%';
-  const third=total/3;
-  let color,textColor;
-  if(t>third*2){color='#a855f7';textColor='#c8b8ff';}
-  else if(t>third){color='#f59e0b';textColor='#fcd34d';}
-  else{color='#ef4444';textColor='#fca5a5';}
-  fill.style.backgroundColor=color;num.style.color=textColor;num.textContent=t;
+function advance() {
+  current++;
+  if(current < QUESTIONS.length) renderQuestion();
+  else showResult();
 }
 
-function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
-
-function onTimeout(correct){
-  if(answered)return;answered=true;
-  const allBtns=document.querySelectorAll('.ans-btn');
-  allBtns.forEach(b=>{
-    b.disabled=true;
-    if(b.textContent===correct)b.classList.add('timeout');
-    else b.classList.add('dim');
-  });
-  flashScreen('red');setTimeout(advance,1200);
-}
-
-function advance(){current++;if(current>=shuffled.length)showResult();else renderQuestion();}
-
-function renderMatchQuestion(container,pairs){
-  matchMatched=0;
-  const shuffledArm=shuffle(pairs.map(p=>p.arm));
-  const wrap=document.createElement('div');wrap.className='match-wrap';
-  const instr=document.createElement('div');instr.className='match-instructions';
-  instr.textContent='Քաշեք ձախից → գցեք ճիշտ հայկական հապավման վրա';
-  wrap.appendChild(instr);
-  const cols=document.createElement('div');cols.className='match-columns';
-  const lw=document.createElement('div');
-  const lh=document.createElement('div');lh.className='match-col-label';lh.textContent='Հապավում';
-  const lc=document.createElement('div');lc.className='left-col';
-  lw.appendChild(lh);lw.appendChild(lc);
-  const mw=document.createElement('div');
-  const mh=document.createElement('div');mh.className='match-col-label';
-  const mc=document.createElement('div');mc.className='mid-col';
-  mw.appendChild(mh);mw.appendChild(mc);
-  const rw=document.createElement('div');
-  const rh=document.createElement('div');rh.className='match-col-label';rh.textContent='Հայկական';
-  const rc=document.createElement('div');rc.className='right-col';
-  rw.appendChild(rh);rw.appendChild(rc);
-  cols.appendChild(lw);cols.appendChild(mw);cols.appendChild(rw);
-  wrap.appendChild(cols);
-
-  pairs.forEach((p,i)=>{
-    const item=document.createElement('div');
-    item.className='drag-item';item.textContent=p.abbr;
-    item.dataset.abbr=p.abbr;item.dataset.correct=p.arm;
-    addDragListeners(item);lc.appendChild(item);
-    const arr=document.createElement('div');arr.className='match-arrow';arr.innerHTML='&#8594;';mc.appendChild(arr);
-    const drop=document.createElement('div');drop.className='drop-zone';
-    drop.dataset.arm=shuffledArm[i];
-    drop.innerHTML='<span>'+shuffledArm[i]+'</span>';
-    addDropListeners(drop);rc.appendChild(drop);
-  });
-
-  const ms=document.createElement('div');ms.className='match-score';
-  ms.innerHTML='Կցված է: <span id="match-score-num">0</span> / '+pairs.length;
-  wrap.appendChild(ms);
-  const nb=document.createElement('button');nb.className='match-next-btn';nb.id='match-next-btn';
-  nb.textContent='Հաջորդը →';
-  nb.onclick=()=>{stopTimer();advance();};
-  wrap.appendChild(nb);
-  container.appendChild(wrap);
-}
-
-function addDragListeners(el){
-  el.addEventListener('mousedown',onMouseDown);
-  el.addEventListener('touchstart',onTouchStart,{passive:false});
-}
-function addDropListeners(el){
-  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over');});
-  el.addEventListener('dragleave',()=>el.classList.remove('over'));
-  el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('over');handleDrop(el);});
-}
-function onMouseDown(e){
-  if(e.currentTarget.classList.contains('locked'))return;
-  dragSrc=e.currentTarget;createGhost(dragSrc.textContent,e.clientX,e.clientY);
-  dragSrc.classList.add('dragging');
-  document.addEventListener('mousemove',onMouseMove);document.addEventListener('mouseup',onMouseUp);e.preventDefault();
-}
-function onMouseMove(e){moveGhost(e.clientX,e.clientY);}
-function onMouseUp(e){
-  document.removeEventListener('mousemove',onMouseMove);document.removeEventListener('mouseup',onMouseUp);
-  removeGhost();if(dragSrc)dragSrc.classList.remove('dragging');
-  const el=document.elementFromPoint(e.clientX,e.clientY);
-  const zone=el&&el.closest('.drop-zone');if(zone)handleDrop(zone);else dragSrc=null;
-}
-function onTouchStart(e){
-  if(e.currentTarget.classList.contains('locked'))return;
-  dragSrc=e.currentTarget;const t=e.touches[0];createGhost(dragSrc.textContent,t.clientX,t.clientY);
-  dragSrc.classList.add('dragging');
-  document.addEventListener('touchmove',onTouchMove,{passive:false});document.addEventListener('touchend',onTouchEnd);e.preventDefault();
-}
-function onTouchMove(e){const t=e.touches[0];moveGhost(t.clientX,t.clientY);e.preventDefault();}
-function onTouchEnd(e){
-  document.removeEventListener('touchmove',onTouchMove);document.removeEventListener('touchend',onTouchEnd);
-  removeGhost();if(dragSrc)dragSrc.classList.remove('dragging');
-  const t=e.changedTouches[0];const el=document.elementFromPoint(t.clientX,t.clientY);
-  const zone=el&&el.closest('.drop-zone');if(zone)handleDrop(zone);else dragSrc=null;
-}
-function createGhost(text,x,y){ghost=document.createElement('div');ghost.className='ghost';ghost.textContent=text;document.body.appendChild(ghost);moveGhost(x,y);}
-function moveGhost(x,y){if(!ghost)return;ghost.style.left=x+'px';ghost.style.top=y+'px';}
-function removeGhost(){if(ghost){ghost.remove();ghost=null;}}
-
-function handleDrop(zone){
-  if(!dragSrc)return;
-  if(zone.classList.contains('correct')){dragSrc=null;return;}
-  const correctArm=dragSrc.dataset.correct;
-  const zoneArm=zone.dataset.arm;
-  const isCorrect=correctArm===zoneArm;
-  if(isCorrect){
-    zone.classList.add('correct');zone.innerHTML='<span>'+zoneArm+'</span>';
-    dragSrc.classList.add('locked','correct');dragSrc.draggable=false;matchMatched++;
-    const sn=document.getElementById('match-score-num');if(sn)sn.textContent=matchMatched;
-    flashScreen('green');
-    const totalPairs=shuffled[current].pairs.length;
-    if(matchMatched===totalPairs){score++;const nb=document.getElementById('match-next-btn');if(nb)nb.classList.add('visible');}
-  } else {
-    zone.classList.add('wrong-flash');dragSrc.classList.add('wrong-shake');
-    setTimeout(()=>{zone.classList.remove('wrong-flash','over');dragSrc.classList.remove('wrong-shake','dragging');},500);
-    flashScreen('red');
-  }
-  dragSrc=null;
-}
-
-function showResult(){
-  stopTimer();show('screen-result');
-  const real=shuffled.filter(q=>q.type!=='placeholder').length;
-  const pct=real>0?Math.round((score/real)*100):0;
-  document.getElementById('donut-pct').textContent=pct+'%';
-  document.getElementById('score-detail').innerHTML='Դուք ճիշտ պատասխանեցիք <span>'+score+' / '+real+'</span> հարցի:';
+function showResult() {
+  document.getElementById('screen-quiz').classList.add('hidden');
+  document.getElementById('screen-result').classList.remove('hidden');
+  const pct = Math.round((score/QUESTIONS.length)*100);
+  document.getElementById('donut-pct').textContent = pct + "%";
+  document.getElementById('score-detail').innerHTML = `Դուք ճիշտ պատասխանեցիք <b>${score} / ${QUESTIONS.length}</b> հարցի:`;
   drawDonut(pct);
 }
-function drawDonut(pct){
-  const canvas=document.getElementById('donut-canvas');const ctx=canvas.getContext('2d');
-  const cx=90,cy=90,r=70,lw=20,start=-Math.PI/2,end=start+(2*Math.PI*pct/100);
+
+function drawDonut(pct) {
+  const canvas = document.getElementById('donut-canvas');
+  const ctx = canvas.getContext('2d');
   ctx.clearRect(0,0,180,180);
-  ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=lw;ctx.stroke();
-  if(pct>0){
-    ctx.beginPath();ctx.arc(cx,cy,r,start,end);
-    const g=ctx.createLinearGradient(cx-r,cy,cx+r,cy);g.addColorStop(0,'#7c3aed');g.addColorStop(1,'#a855f7');
-    ctx.strokeStyle=g;ctx.lineWidth=lw;ctx.lineCap='round';ctx.stroke();
-  }
+  ctx.beginPath(); ctx.arc(90,90,70,0,2*Math.PI);
+  ctx.strokeStyle = "rgba(255,255,255,0.1)"; ctx.lineWidth = 15; ctx.stroke();
+  ctx.beginPath(); ctx.arc(90,90,70,-Math.PI/2, (-Math.PI/2) + (2*Math.PI*pct/100));
+  ctx.strokeStyle = "#a855f7"; ctx.lineWidth = 15; ctx.lineCap = "round"; ctx.stroke();
 }
-function restartQuiz(){show('screen-main');}
+
+function restartQuiz() {
+  document.getElementById('screen-result').classList.add('hidden');
+  document.getElementById('screen-main').classList.remove('hidden');
+}
 </script>
